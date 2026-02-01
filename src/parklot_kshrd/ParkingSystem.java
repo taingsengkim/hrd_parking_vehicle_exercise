@@ -1,22 +1,11 @@
-package parklot_kshrd;
-
-import FileIO.UseFileOutPutStream;
 import org.nocrala.tools.texttablefmt.BorderStyle;
-import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
 
-import java.lang.classfile.Interfaces;
-import java.sql.SQLOutput;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Scanner;
 
-public class ParkingSystem {
-    static void main(String[] args) {
+static void main(String[] args) {
         String regex = "^[0-9][A-Z]{2}-[0-9]{4}$";
         String regexFloorSpot = "^F\\d+-\\d+$";
         Scanner scanner = new Scanner(System.in);
@@ -196,9 +185,6 @@ public class ParkingSystem {
                                        }
                                        System.out.println("Please Enter Valid Plate (Ex : 1AD-1902 or 2KL-4839 ) !");
                                    }while (true);
-
-
-
                                    outer:
                                    for (int i = 0 ; i < parkingSpace.length ; i++){
                                        for (int j = 0 ; j < parkingSpace[i].length ; j++){
@@ -214,11 +200,6 @@ public class ParkingSystem {
                                                    }
                                                    System.out.println("Please Enter Valid Floor And Spot (Ex : F2-10 Or F12-1 ) !");
                                                }while (true);
-
-
-
-
-
                                                String[] parts = regSpot.substring(1).split("-");
                                                int newFloor = Integer.parseInt(parts[0]);
                                                int newSpot  = Integer.parseInt(parts[1]);
@@ -250,6 +231,43 @@ public class ParkingSystem {
 
 
                                    break;
+                               }
+                               case "2" : {
+                                   System.out.println("--> Enter Spot Id : ");
+                                   String regSpot ;
+                                   do{
+                                       regSpot=scanner.nextLine().toUpperCase();
+                                       if (regSpot.matches(regexFloorSpot)){
+                                           break;
+                                       }
+                                       System.out.println("Please Enter Valid Floor And Spot (Ex : F2-10 Or F12-1 ) !");
+                                   }while (true);
+                                   String[] parts = regSpot.substring(1).split("-");
+                                   int checkFloor = Integer.parseInt(parts[0]);
+                                   int checkSpot  = Integer.parseInt(parts[1]);
+                                   if (parkingSpace[checkFloor][checkSpot] == null){
+                                       System.out.println("No vehicle parked in here.");
+                                       break;
+                                   }else {
+                                       System.out.println("Vechicle : " + parkingSpace[checkFloor][checkSpot].split(",")[0]);
+                                       System.out.println("Floor : " + checkFloor);
+                                       System.out.println("Spot : " + checkSpot);
+                                       System.out.println("Status : Occupied");
+                                       System.out.println("->> Do you want to update the status to Empty ? (Y/N) : ");
+                                        String status = scanner.nextLine().toLowerCase();
+                                        switch (status){
+                                            case "y":{
+                                                parkingSpace[checkFloor][checkSpot] = null;
+                                                System.out.println("Update status Sucessfully!");
+                                                break;
+                                            }
+                                            case "n":{
+                                                System.out.println("Cancle Update Status!");
+                                                break;
+                                            }
+                                        }
+                                   }
+
                                }
                                case "3" : break;
                            }
@@ -290,8 +308,53 @@ public class ParkingSystem {
                    }
                    break;
                }
+               case "3":{
+                   System.out.println("================ System Setting ================");
+                   System.out.println("1 ) Reset Parking Space");
+                   System.out.println("2 ) Set Number of floor to display");
+                   System.out.println("3 ) Back");
+                   System.out.println("--> Enter your choice (1-3) : ");
+                   String opt = scanner.nextLine();
+                   switch (opt){
+                       case "1":{
+                           System.out.println("WARNING : this will remove all parked vehicles.");
+                           System.out.println("Are you sure you want to remove ? ( Y/N) ");
+                           String resetOpt = scanner.nextLine().toLowerCase();
+                           switch (resetOpt ){
+                               case "y": {
+                                   for (int i = 0 ; i < parkingSpace.length ; i++){
+                                       for (int j = 0 ; j < parkingSpace[i].length ; j++){
+                                           parkingSpace[i][j] = null;
+                                       }
+                                   }
+                                   System.out.println("Reset all parked space sucessfully!");
+                                   break;
+                               }
+                               case "n":{
+                                   System.out.println("Cancel resetting all spot.");
+                                   break;
+                               }
+                           }
+                           break;
+                       }
+                       case "2":{
+                           System.out.println("=============== Set Number of floor to display ===============");
+                           System.out.println("Input the number of floor : ");
+                           Integer setNumOfFloor = Integer.parseInt(scanner.nextLine());
+                           String[][] oldParkingSpace = parkingSpace;
+                           parkingSpace = new String [setNumOfFloor][spots];
+                            for (int i = 0 ; i < setNumOfFloor;i++){
+                                for (int j = 0 ; j < oldParkingSpace[i].length;j++){
+                                    parkingSpace[i][j] = oldParkingSpace[i][j];
+                                }
+                            }
+                           System.out.println("Set Sucessfully!");
+                           break;
+                       }
+                   }
+                   break;
+               }
                case "4" : return;
            }
        }while (true);
     }
-}
