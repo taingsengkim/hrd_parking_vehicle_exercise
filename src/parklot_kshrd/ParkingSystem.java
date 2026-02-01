@@ -18,6 +18,7 @@ import java.util.Scanner;
 public class ParkingSystem {
     static void main(String[] args) {
         String regex = "^[0-9][A-Z]{2}-[0-9]{4}$";
+        String regexFloorSpot = "^F\\d+-\\d+$";
         Scanner scanner = new Scanner(System.in);
         System.out.println("============ Setup Parking Lot System ============");
         System.out.println("--> Enter number of floors : ");
@@ -180,6 +181,78 @@ public class ParkingSystem {
                                }
                             }
                            System.out.println(floorDetails.render());
+
+                           System.out.println("1 ) Move parking spot \t2 ) Update parking spot status \t3) Back");
+                           System.out.println("Please input your choice (1-3) : ");
+                           String choice = scanner.nextLine();
+                           switch (choice){
+                               case "1" : {
+                                   System.out.println("--> Enter vehicle plate number to move : ");
+                                   String plate ;
+                                   do{
+                                       plate=scanner.nextLine().toUpperCase();
+                                       if (plate.matches(regex)){
+                                           break;
+                                       }
+                                       System.out.println("Please Enter Valid Plate (Ex : 1AD-1902 or 2KL-4839 ) !");
+                                   }while (true);
+
+
+
+                                   outer:
+                                   for (int i = 0 ; i < parkingSpace.length ; i++){
+                                       for (int j = 0 ; j < parkingSpace[i].length ; j++){
+                                           if (parkingSpace[i][j] != null && parkingSpace[i][j].split(",")[0].equals(plate)) {
+                                               System.out.println("Vehicle Found!");
+
+                                               System.out.println("--> Enter spot's ID (Ex : F1-21) : ");
+                                               String regSpot ;
+                                               do{
+                                                   regSpot=scanner.nextLine().toUpperCase();
+                                                   if (regSpot.matches(regexFloorSpot)){
+                                                       break;
+                                                   }
+                                                   System.out.println("Please Enter Valid Floor And Spot (Ex : F2-10 Or F12-1 ) !");
+                                               }while (true);
+
+
+
+
+
+                                               String[] parts = regSpot.substring(1).split("-");
+                                               int newFloor = Integer.parseInt(parts[0]);
+                                               int newSpot  = Integer.parseInt(parts[1]);
+
+                                               if (parkingSpace[newFloor][newSpot] != null){
+                                                   System.out.println("This spot already parked by other vehicle!");
+                                                   break;
+                                               }
+
+                                               String oldFloor = parkingSpace[i][j].split(",")[1];
+                                               String oldSpot = parkingSpace[i][j].split(",")[2];
+
+                                               System.out.println("Old =>> Floor : " + oldFloor + " | " + " Spot : " + oldSpot);
+                                               System.out.println("Move To =>> Floor : " + newFloor + " | " + " Spot : " + newSpot);
+
+                                               parkingSpace[newFloor][newSpot] = parkingSpace[i][j];
+                                               parkingSpace[i][j] = null;
+
+                                               System.out.println("Vehicle moves to new spot successfully!");
+
+                                               break outer;
+                                           }
+                                       }
+                                       System.out.println();
+                                   }
+
+
+
+
+
+                                   break;
+                               }
+                               case "3" : break;
+                           }
                             break;
                        }
                        case "2":{
